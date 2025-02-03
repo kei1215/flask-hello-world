@@ -113,7 +113,7 @@ def image_view(hash_value):
     
     if response.status_code == 200:
         image_data = requests.get(response).content  # URLから画像データを取得
-        return Response(image_data, mimetype='image/png')
+        return Response(image_data)
     
     return "画像が見つかりません", 404
 
