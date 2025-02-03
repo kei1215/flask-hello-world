@@ -34,21 +34,6 @@ def upload_to_discord(file_path, is_public):
         return json_resp['attachments'][0]['url']
     return None
 
-def send_text_to_discord(text, is_public):
-    """Discordに文字だけを送信"""
-    webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
-    
-    data = {
-        'content': text  # 送信したいテキスト
-    }
-    
-    response = requests.post(webhook_url, json=data)
-    
-    if response.status_code == 200:
-        return None
-    else:
-        return None
-        
 def save_to_pastebin(hash_value, cdn_url):
     """Pastebinに画像URLとハッシュを保存し、そのURLを返す"""
     data = {
@@ -91,11 +76,14 @@ def upload():
     # ✅ Discord にアップロードして CDN URL を取得
     cdn_url = upload_to_discord(file_path, is_public)
     os.remove(file_path)  # アップロード後、ローカルから削除
-    
+
     if cdn_url:
+        # ✅ ハッシュ値を生成
+        unique_hash = generate_hash()
+        
+        # ✅ Pastebin にデータ保存
         pastebin_url = save_to_pastebin(cdn_url)
         photo_url = pastebin_url.replace("https://pastebin.com/", "https://photo.kei1215.net/")
-        send_text_to_discord(photo_url, is_public)
         if pastebin_url:
             return f"アップロード成功！画像URL: <a href='{photo_url}'>{photo_url}</a>"
         else:
@@ -113,7 +101,7 @@ def image_view(hash_value):
         data = response.text.strip().split(": ")
         if len(data) == 2:
             _, image_url = data
-            return image_url
+            return f'<img src="{image_url}" alt="Uploaded Image">'
     
     return "画像が見つかりません", 404
 
