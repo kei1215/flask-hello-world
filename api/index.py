@@ -70,7 +70,7 @@ def save_to_pastebin(cdn_url):
 
 def allowed_file(filename):
     # 拡張子を小文字にして取得
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'}
+    ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'}
     ext = os.path.splitext(filename)[1].lower()
     print(ext)
     return ext in ALLOWED_EXTENSIONS
