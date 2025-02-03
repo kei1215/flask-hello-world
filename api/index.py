@@ -8,8 +8,8 @@ import mimetypes
 app = Flask(__name__)
 
 # 📌 Discord Webhook URLs (公開枠 & 限定公開枠)
-PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1335903672130994216/nquebBIPEnslaSsiGdHXBYQpmMsKIhxzt0eGjIuiyysgljKVZSpJZiGiO1mtYSLy-KbA"
-PRIVATE_WEBHOOK_URL = "YOUR_PRIVATE_DISCORD_WEBHOOK"
+PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930743729422356/nmvuf6bZO5ZpYWBmbo48WNwyc2RQ-quqwQaZ8ixvkATzq7q130qd4WupVg9ZfVVYysCE"
+PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930745843089458/AYK-0btOe8vN-LE9ugVV15aDKi_XTNaNYij4iZS021qzzt6RPGt9TkHwQwzjCLP0arOB"
 
 # 📌 Pastebin APIキー
 PASTEBIN_API_KEY = "iORBwgh6pDEr9UBFgH0pyPHV20sjwJZP"
