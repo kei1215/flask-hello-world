@@ -115,7 +115,7 @@ def image_view(hash_value):
         data = response.text.strip().split(": ")
         if len(data) == 2:
             _, image_url = data
-            return f'<img src="{image_url}" alt="Uploaded Image">'
+            return image_url
     
     return "画像が見つかりません", 404
 
