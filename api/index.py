@@ -56,40 +56,38 @@ def index():
     """アップロードページを表示"""
     return render_template("upload.html")
 
-@app.route("/upload", methods=["POST"])
-def upload():
-    """画像をアップロードし、Discord → Pastebin に保存"""
-    if "file" not in request.files:
-        return "ファイルが選択されていません"
-    
-    file = request.files["file"]
-    if file.filename == "":
-        return "ファイルがありません"
-    
-    # ✅ 公開設定を取得
-    is_public = request.form.get("visibility") == "public"
+import json
 
-    # ✅ ファイルを保存
-    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(file_path)
-    
-    # ✅ Discord にアップロードして CDN URL を取得
-    cdn_url = upload_to_discord(file_path, is_public)
-    os.remove(file_path)  # アップロード後、ローカルから削除
-    
-    if cdn_url:
-        # ✅ ハッシュ値を生成
-        unique_hash = generate_hash()
-        
-        # ✅ Pastebin にデータ保存
-        pastebin_url = save_to_pastebin(unique_hash, cdn_url)
-        
-        if pastebin_url:
-            return f"アップロード成功！画像URL: <a href='{pastebin_url}'>{pastebin_url}</a>"
-        else:
-            return "Pastebin への保存に失敗しました"
-    
-    return "アップロードに失敗しました"
+def upload_to_discord(file_path, is_public):
+    """画像をDiscordにアップロードし、CDNのURLを取得"""
+    webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
+    with open(file_path, 'rb') as f:
+        files = {'file': f}
+        # 画像をアップロード
+        response = requests.post(webhook_url, files=files)
+
+    if response.status_code == 200:
+        try:
+            json_resp = response.json()
+            # 画像URLを取得
+            image_url = json_resp['attachments'][0]['url']
+            # リンクと一緒にメッセージを送信
+            message_data = {
+                "content": f"画像がアップロードされました！\nリンク: https://photo.kei1215.net/{unique_hash}",
+                "embeds": [{
+                    "image": {
+                        "url": image_url
+                    }
+                }]
+            }
+            # メッセージをWebhookで送信
+            response_message = requests.post(webhook_url, json=message_data)
+            if response_message.status_code == 204:
+                return image_url  # 画像URLを返す
+        except KeyError:
+            return "DiscordのレスポンスにURLが含まれていません"
+    return None
+
 
 @app.route("/<hash_value>", methods=["GET"])
 def image_view(hash_value):
