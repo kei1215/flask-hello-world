@@ -42,7 +42,7 @@ def send_text_to_discord(text, is_public):
     webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
     
     data = {
-        'content': text  # 送信したいテキスト
+        'content': f"```{text}```"  # 送信したいテキスト
     }
     
     response = requests.post(webhook_url, json=data)
