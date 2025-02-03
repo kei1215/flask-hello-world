@@ -34,6 +34,23 @@ def upload_to_discord(file_path, is_public):
         return json_resp['attachments'][0]['url']
     return None
 
+import requests
+
+def send_text_to_discord(text, is_public):
+    """Discordに文字だけを送信"""
+    webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
+    
+    data = {
+        'content': text  # 送信したいテキスト
+    }
+    
+    response = requests.post(webhook_url, json=data)
+    
+    if response.status_code == 200:
+        return "メッセージ送信成功"
+    else:
+        return "メッセージ送信に失敗しました"
+        
 def save_to_pastebin(hash_value, cdn_url):
     """Pastebinに画像URLとハッシュを保存し、そのURLを返す"""
     data = {
@@ -78,14 +95,11 @@ def upload():
     os.remove(file_path)  # アップロード後、ローカルから削除
     
     if cdn_url:
-        # ✅ ハッシュ値を生成
-        unique_hash = generate_hash()
-        
-        # ✅ Pastebin にデータ保存
-        pastebin_url = save_to_pastebin(unique_hash, cdn_url)
-        
+        pastebin_url = save_to_pastebin(cdn_url)
+        photo_url = pastebin_url.replace("https://pastebin.com/", "https://photo.kei1215.net/")
+        send_text_to_discord(photo_url, is_public)
         if pastebin_url:
-            return f"アップロード成功！画像URL: <a href='{pastebin_url}'>{pastebin_url}</a>"
+            return f"アップロード成功！画像URL: <a href='{photo_url}'>{photo_url}</a>"
         else:
             return "Pastebin への保存に失敗しました"
     
