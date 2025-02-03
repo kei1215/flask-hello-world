@@ -85,7 +85,7 @@ def upload():
         pastebin_url = save_to_pastebin(unique_hash, cdn_url)
         
         if pastebin_url:
-            return f"アップロード成功！画像URL: <a href='photo.kei1215.net/{unique_hash}'>photo.kei1215.net/{unique_hash}</a>"
+            return f"アップロード成功！画像URL: <a href='{pastebin_url}'>{pastebin_url}</a>"
         else:
             return "Pastebin への保存に失敗しました"
     
