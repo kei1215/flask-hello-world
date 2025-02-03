@@ -91,9 +91,7 @@ def upload():
     # ✅ 公開設定を取得
     is_public = request.form.get("visibility") == "public"
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'}
-    mime_type, _ = mimetypes.guess_type(file.filename)
-    print(mimetypes.guess_type(file.filename))
-     if not allowed_file(file.filename):
+    if not allowed_file(file.filename):
         return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
     # ✅ ファイルを保存
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
