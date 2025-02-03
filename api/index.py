@@ -3,7 +3,6 @@ import os
 import random
 import string
 import requests
-import mimetypes
 
 app = Flask(__name__)
 
@@ -69,6 +68,11 @@ def save_to_pastebin(cdn_url):
     else:
         return None
 
+def allowed_file(filename):
+    # 拡張子を小文字にして取得
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in ALLOWED_EXTENSIONS
+
 @app.route("/", methods=["GET"])
 def index():
     """アップロードページを表示"""
@@ -86,10 +90,10 @@ def upload():
     
     # ✅ 公開設定を取得
     is_public = request.form.get("visibility") == "public"
-    ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/bmp']
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'}
     mime_type, _ = mimetypes.guess_type(file.filename)
     print(mimetypes.guess_type(file.filename))
-    if mime_type not in ALLOWED_MIME_TYPES:
+     if not allowed_file(file.filename):
         return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
     # ✅ ファイルを保存
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
