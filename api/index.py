@@ -76,16 +76,16 @@ def upload():
     # ✅ Discord にアップロードして CDN URL を取得
     cdn_url = upload_to_discord(file_path, is_public)
     os.remove(file_path)  # アップロード後、ローカルから削除
-
+    
     if cdn_url:
         # ✅ ハッシュ値を生成
         unique_hash = generate_hash()
         
         # ✅ Pastebin にデータ保存
-        pastebin_url = save_to_pastebin(cdn_url)
-        photo_url = pastebin_url.replace("https://pastebin.com/", "https://photo.kei1215.net/")
+        pastebin_url = save_to_pastebin(unique_hash, cdn_url)
+        
         if pastebin_url:
-            return f"アップロード成功！画像URL: <a href='{photo_url}'>{photo_url}</a>"
+            return f"アップロード成功！画像URL: <a href='{pastebin_url}'>{pastebin_url}</a>"
         else:
             return "Pastebin への保存に失敗しました"
     
