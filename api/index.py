@@ -112,8 +112,8 @@ def image_view(hash_value):
     response = requests.get(pastebin_url)
     
     if response.status_code == 200:
-        image_data = requests.get(response).content  # URLから画像データを取得
-        return Response(image_data)
+        _, image_url = response
+        return f'<img src="{image_url}" alt="Uploaded Image">'
     
     return "画像が見つかりません", 404
 
