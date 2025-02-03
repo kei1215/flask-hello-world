@@ -70,6 +70,7 @@ def save_to_pastebin(cdn_url):
 
 def allowed_file(filename):
     # 拡張子を小文字にして取得
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'}
     ext = os.path.splitext(filename)[1].lower()
     return ext in ALLOWED_EXTENSIONS
 
@@ -90,7 +91,6 @@ def upload():
     
     # ✅ 公開設定を取得
     is_public = request.form.get("visibility") == "public"
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'}
     if not allowed_file(file.filename):
         return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
     # ✅ ファイルを保存
