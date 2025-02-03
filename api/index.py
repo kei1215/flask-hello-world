@@ -3,6 +3,7 @@ import os
 import random
 import string
 import requests
+import mimetypes
 
 app = Flask(__name__)
 
@@ -85,10 +86,15 @@ def upload():
     
     # ✅ 公開設定を取得
     is_public = request.form.get("visibility") == "public"
-
+    ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/bmp']
+    mime_type, _ = mimetypes.guess_type(file.filename)
+    
+    if mime_type not in ALLOWED_MIME_TYPES:
+        return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
     # ✅ ファイルを保存
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
+
     
     # ✅ Discord にアップロードして CDN URL を取得
     cdn_url = upload_to_discord(file_path, is_public)
