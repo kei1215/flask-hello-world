@@ -7,11 +7,11 @@ import requests
 app = Flask(__name__)
 
 # 📌 Discord Webhook URLs (公開枠 & 限定公開枠)
-PUBLIC_WEBHOOK_URL = "YOUR_PUBLIC_DISCORD_WEBHOOK"
+PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1335903672130994216/nquebBIPEnslaSsiGdHXBYQpmMsKIhxzt0eGjIuiyysgljKVZSpJZiGiO1mtYSLy-KbA"
 PRIVATE_WEBHOOK_URL = "YOUR_PRIVATE_DISCORD_WEBHOOK"
 
 # 📌 Pastebin APIキー
-PASTEBIN_API_KEY = "YOUR_PASTEBIN_API_KEY"
+PASTEBIN_API_KEY = "iORBwgh6pDEr9UBFgH0pyPHV20sjwJZP"
 PASTEBIN_URL = "https://pastebin.com/api/api_post.php"
 
 # 📌 一時ファイル保存フォルダ
