@@ -34,8 +34,6 @@ def upload_to_discord(file_path, is_public):
         return json_resp['attachments'][0]['url']
     return None
 
-import requests
-
 def send_text_to_discord(text, is_public):
     """Discordに文字だけを送信"""
     webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
@@ -47,9 +45,9 @@ def send_text_to_discord(text, is_public):
     response = requests.post(webhook_url, json=data)
     
     if response.status_code == 200:
-        return "メッセージ送信成功"
+        return None
     else:
-        return "メッセージ送信に失敗しました"
+        return None
         
 def save_to_pastebin(hash_value, cdn_url):
     """Pastebinに画像URLとハッシュを保存し、そのURLを返す"""
