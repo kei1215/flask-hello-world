@@ -113,7 +113,7 @@ def image_view(hash_value):
     
     if response.status_code == 200:
         _, image_url = response
-        return f'<img src="{image_url}" alt="Uploaded Image">'
+        return f'{response}'
     
     return "画像が見つかりません", 404
 
