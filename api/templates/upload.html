@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>画像アップロード</title>
+    <title>ファイル表示</title>
 </head>
 <body>
-    <h2>画像をアップロード</h2>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <br>
-        <label>
-            <input type="radio" name="visibility" value="public" checked> 公開
-        </label>
-        <label>
-            <input type="radio" name="visibility" value="private"> 限定公開
-        </label>
-        <br>
-        <button type="submit">アップロード</button>
-    </form>
+    <h2>アップロードされたファイル</h2>
+    {% if file_url %}
+        {% if file_url.endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp')) %}
+            <img src="{{ file_url }}" alt="Uploaded Image" style="max-width: 100%;">
+        {% elif file_url.endswith(('.mp4', '.mov', '.avi', '.mkv')) %}
+            <video controls>
+                <source src="{{ file_url }}" type="video/mp4">
+                お使いのブラウザは動画タグをサポートしていません。
+            </video>
+        {% elif file_url.endswith(('.mp3', '.wav', '.flac')) %}
+            <audio controls>
+                <source src="{{ file_url }}" type="audio/mpeg">
+                お使いのブラウザはオーディオタグをサポートしていません。
+            </audio>
+        {% else %}
+            <p>このファイル形式はプレビューできません。</p>
+            <a href="{{ file_url }}">ダウンロード</a>
+        {% endif %}
+    {% else %}
+        <p>ファイルが見つかりません。</p>
+    {% endif %}
 </body>
 </html>
