@@ -87,9 +87,9 @@ def upload():
     redis.set(hash, cdn_url)
     
     if cdn_url:
-        send_text_to_discord(f'https://soliup.kei1215.net/{hash}', is_public)
+        send_text_to_discord(f'https://soliup.kei1215.com/{hash}', is_public)
         if cdn_url:
-            return f"アップロード成功！画像URL: <a href='https://photo.kei1215.net/{hash}'>https://photo.kei1215.net/{hash}</a>"
+            return f"アップロード成功！画像URL: <a href='https://soliup.kei1215.com/{hash}'>https://soliup.kei1215.com/{hash}</a>"
         else:
             return "Pastebin への保存に失敗しました"
     
@@ -105,9 +105,10 @@ def image_view(hash_value):
         
         # ファイルの拡張子からMIMEタイプを取得
         mime_type, _ = mimetypes.guess_type(response)
+        print(mime_type)
         if not mime_type:
             mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
-
+            
         return Response(image_data, mimetype=mime_type)
     
     return "画像が見つかりません", 404
