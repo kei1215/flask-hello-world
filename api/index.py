@@ -101,11 +101,10 @@ def image_view(hash_value):
     response = redis.get(hash_value)
     
     if response:
-        url = response.decode()  # Redis から取得したURLをデコード
-        image_data = requests.get(url).content  # URLから画像データを取得
+        image_data = requests.get(response).content  # URLから画像データを取得
         
         # ファイルの拡張子からMIMEタイプを取得
-        mime_type, _ = mimetypes.guess_type(url)
+        mime_type, _ = mimetypes.guess_type(response)
         if not mime_type:
             mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
 
