@@ -120,7 +120,7 @@ def image_view(hash_value):
         image_data = requests.get(url).content  # URLから画像データを取得
         
         # ファイルの拡張子からMIMEタイプを取得
-        mime_type, _ = EXTENSION_TO_MIMETYPE.get(url.split('?')[0].split('.')[-1].lower(), "application/octet-stream")
+        mime_type = EXTENSION_TO_MIMETYPE.get(url.split('?')[0].split('.')[-1].lower(), "application/octet-stream")
         print(f"Detected MIME Type: {mime_type}")
         if not mime_type:
             mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
