@@ -14,6 +14,22 @@ PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930745843089458/AYK-
 
 redis = Redis(url="https://hopeful-primate-11670.upstash.io", token="AS2WAAIjcDEwMzE0MjVhY2JkNDc0MzFjYTQxZGY4MDFmYzJhNGY2ZXAxMA")
 
+EXTENSION_TO_MIMETYPE = {
+    "png": "image/png",
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "gif": "image/gif",
+    "webp": "image/webp",
+    "bmp": "image/bmp",
+    "tiff": "image/tiff",
+    "svg": "image/svg+xml",
+    "mp4": "video/mp4",
+    "webm": "video/webm",
+    "mp3": "audio/mpeg",
+    "wav": "audio/wav",
+    "ogg": "audio/ogg",
+}
+
 # 📌 一時ファイル保存フォルダ
 UPLOAD_FOLDER = "/tmp/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -104,8 +120,8 @@ def image_view(hash_value):
         image_data = requests.get(url).content  # URLから画像データを取得
         
         # ファイルの拡張子からMIMEタイプを取得
-        mime_type, _ = mimetypes.guess_type(url.split('?')[0])
-        print(mime_type)
+        mime_type, _ = EXTENSION_TO_MIMETYPE.get(url.split('?')[0].split('.')[-1].lower(), "application/octet-stream")
+        print(f"Detected MIME Type: {mime_type}")
         if not mime_type:
             mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
             
