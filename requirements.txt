@@ -1,4 +1,3 @@
 Flask
 requests
 upstash_redis
-mimetypes
