@@ -13,19 +13,16 @@ PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930745843089458/AYK-
 
 redis = Redis(url="https://hopeful-primate-11670.upstash.io", token="AS2WAAIjcDEwMzE0MjVhY2JkNDc0MzFjYTQxZGY4MDFmYzJhNGY2ZXAxMA")
 
-
-
-
 # 📌 一時ファイル保存フォルダ
 UPLOAD_FOLDER = "/tmp/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.mp4', '.mov', '.avi', '.mkv', '.mp3', '.wav', '.flac'}
-
 def generate_hash():
+    """8桁の一意なランダムハッシュを生成"""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
 def upload_to_discord(file_path, is_public):
+    """画像をDiscordにアップロードし、CDNのURLを取得"""
     webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
     files = {'file': open(file_path, 'rb')}
     response = requests.post(webhook_url, files=files)
@@ -36,45 +33,77 @@ def upload_to_discord(file_path, is_public):
         return json_resp['attachments'][0]['url']
     return None
 
-def save_to_edgedb(hash_value, cdn_url, is_public):
-    redis.set(hash_value, cdn_url)
+import requests
 
-def get_file_from_edgedb(hash_value):
-    return redis.get(hash_value)
+def send_text_to_discord(text, is_public):
+    """Discordに文字だけを送信"""
+    webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
+    
+    data = {
+        'content': f"```{text}```"  # 送信したいテキスト
+    }
+    
+    response = requests.post(webhook_url, json=data)
+    
+    if response.status_code == 200:
+        return "メッセージ送信成功"
+    else:
+        return "メッセージ送信に失敗しました"
+        
+def allowed_file(filename):
+    # 拡張子を小文字にして取得
+    ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.mp4', '.mov', '.avi', '.mkv', '.mp3', '.wav', '.flac'}
+    ext = os.path.splitext(filename)[1].lower()
+    print(ext)
+    return ext in ALLOWED_EXTENSIONS
 
 @app.route("/", methods=["GET"])
 def index():
+    """アップロードページを表示"""
     return render_template("upload.html")
 
 @app.route("/upload", methods=["POST"])
 def upload():
+    """画像をアップロードし、Discord → Pastebin に保存"""
     if "file" not in request.files:
         return "ファイルが選択されていません"
     
     file = request.files["file"]
-    if file.filename == "" or os.path.splitext(file.filename)[1].lower() not in ALLOWED_EXTENSIONS:
-        return jsonify({'error': 'Invalid file type'}), 400
+    if file.filename == "":
+        return "ファイルがありません"
     
+    # ✅ 公開設定を取得
     is_public = request.form.get("visibility") == "public"
-    hash_value = generate_hash()
+    if not allowed_file(file.filename):
+        return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
+    # ✅ ファイルを保存
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(file_path)
+    hash = generate_hash()
     
     cdn_url = upload_to_discord(file_path, is_public)
-    os.remove(file_path)
+    os.remove(file_path)  # アップロード後、ローカルから削除
+    redis.set(hash, cdn_url)
     
     if cdn_url:
-        save_to_edgedb(hash_value, cdn_url, is_public)
-        return f"アップロード成功！ファイルURL: <a href='/view/{hash_value}'>こちら</a>"
+        send_text_to_discord('https://photo.kei1215.net/{hash}', is_public)
+        if pastebin_url:
+            return f"アップロード成功！画像URL: <a href='https://photo.kei1215.net/{hash}'>https://photo.kei1215.net/{hash}</a>"
+        else:
+            return "Pastebin への保存に失敗しました"
     
     return "アップロードに失敗しました"
 
-@app.route("/view/<hash_value>", methods=["GET"])
-def view_file(hash_value):
-    file_data = get_file_from_edgedb(hash_value)
-    if file_data:
-        return render_template("view.html", file_url=file_data.url, is_public=file_data.is_public)
-    return "ファイルが見つかりません", 404
+@app.route("/<hash_value>", methods=["GET"])
+def image_view(hash_value):
+    """ハッシュ値に対応する画像を取得し表示"""
+    response = return redis.get(hash_value)
+    
+    if response.status_code == 200:
+        image_data = requests.get(response.text).content  # URLから画像データを取得
+        return Response(image_data)
+    
+    return "画像が見つかりません", 404
 
 if __name__ == "__main__":
     app.run(debug=True)
