@@ -2,8 +2,9 @@ import os
 import random
 import string
 import requests
-from flask import Flask, request, render_template, jsonify, Response
+import mimetypes
 from upstash_redis import Redis
+from flask import Flask, request, render_template, jsonify, Response
 
 app = Flask(__name__)
 
@@ -100,8 +101,15 @@ def image_view(hash_value):
     response = redis.get(hash_value)
     
     if response:
-        image_data = requests.get(response).content  # URLから画像データを取得
-        return Response(image_data, mimetype='image/png')
+        url = response.decode()  # Redis から取得したURLをデコード
+        image_data = requests.get(url).content  # URLから画像データを取得
+        
+        # ファイルの拡張子からMIMEタイプを取得
+        mime_type, _ = mimetypes.guess_type(url)
+        if not mime_type:
+            mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
+
+        return Response(image_data, mimetype=mime_type)
     
     return "画像が見つかりません", 404
 
