@@ -7,6 +7,7 @@ from upstash_redis import Redis
 from flask import Flask, request, render_template, jsonify, Response
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
 
 # 📌 Discord Webhook URLs (公開枠 & 限定公開枠)
 PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930743729422356/nmvuf6bZO5ZpYWBmbo48WNwyc2RQ-quqwQaZ8ixvkATzq7q130qd4WupVg9ZfVVYysCE"
