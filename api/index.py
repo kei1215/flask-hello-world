@@ -1,9 +1,9 @@
-import edgedb
 import os
 import random
 import string
 import requests
 from flask import Flask, request, render_template, jsonify, Response
+from upstash_redis import Redis
 
 app = Flask(__name__)
 
@@ -11,15 +11,10 @@ app = Flask(__name__)
 PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930743729422356/nmvuf6bZO5ZpYWBmbo48WNwyc2RQ-quqwQaZ8ixvkATzq7q130qd4WupVg9ZfVVYysCE"
 PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930745843089458/AYK-0btOe8vN-LE9ugVV15aDKi_XTNaNYij4iZS021qzzt6RPGt9TkHwQwzjCLP0arOB"
 
-# 📌 EdgeDB 接続設定
-client = edgedb.create_client(
-  # Note: these options aren't needed for your project deployed on Vercel,
-  # they will be automatically found from environment variables
-  "vercel-ZgeMH2ygn0F0WRBtdlNJY5fb/edgedb-lightBlue-notebook",
-  secret_key = "nbwt1_eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJlZGIuZC5hbGwiOnRydWUsImVkYi5pIjpbInZlcmNlbC1aZ2VNSDJ5Z24wRjBXUkJ0ZGxOSlk1ZmIvZWRnZWRiLWxpZ2h0Qmx1ZS1ub3RlYm9vayJdLCJlZGIuci5hbGwiOnRydWUsImlhdCI6MTczODg0ODY1OSwiaXNzIjoiYXdzLmVkZ2VkYi5jbG91ZCIsImp0aSI6Im1rczczdVNPRWUteEtFdDJCVGdHa3ciLCJzdWIiOiJtZkRmZk9TT0VlLW53VWVpVmZXaHZ3In0.oL8pX6ORdLfNg8muM3J5o2zbLoScsLIC3tiJhKeJjWP286SAF-Y7fxHYPoMmRrM7XHOvyDh58yQcagIwW9jI9Q"
-)
+redis = Redis(url="https://hopeful-primate-11670.upstash.io", token="AS2WAAIjcDEwMzE0MjVhY2JkNDc0MzFjYTQxZGY4MDFmYzJhNGY2ZXAxMA")
 
-result = client.query("select 1 + 2")
+
+
 
 # 📌 一時ファイル保存フォルダ
 UPLOAD_FOLDER = "/tmp/uploads"
@@ -42,29 +37,10 @@ def upload_to_discord(file_path, is_public):
     return None
 
 def save_to_edgedb(hash_value, cdn_url, is_public):
-    client.query(
-        """
-        INSERT UploadedFile {
-            hash := <str>$hash,
-            url := <str>$url,
-            is_public := <bool>$is_public,
-            uploaded_at := datetime_current()
-        }
-        """,
-        hash=hash_value, url=cdn_url, is_public=is_public
-    )
+    redis.set(hash_value, cdn_url)
 
 def get_file_from_edgedb(hash_value):
-    result = client.query_single(
-        """
-        SELECT UploadedFile {
-            url,
-            is_public
-        } FILTER .hash = <str>$hash
-        """,
-        hash=hash_value
-    )
-    return result
+    return redis.get(hash_value)
 
 @app.route("/", methods=["GET"])
 def index():
