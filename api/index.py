@@ -97,7 +97,7 @@ def upload():
 @app.route("/<hash_value>", methods=["GET"])
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
-    response = return redis.get(hash_value)
+    response = redis.get(hash_value)
     
     if response.status_code == 200:
         image_data = requests.get(response.text).content  # URLから画像データを取得
