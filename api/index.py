@@ -86,7 +86,7 @@ def upload():
     redis.set(hash, cdn_url)
     
     if cdn_url:
-        send_text_to_discord('https://photo.kei1215.net/{hash}', is_public)
+        send_text_to_discord(f'https://photo.kei1215.net/{hash}', is_public)
         if pastebin_url:
             return f"アップロード成功！画像URL: <a href='https://photo.kei1215.net/{hash}'>https://photo.kei1215.net/{hash}</a>"
         else:
