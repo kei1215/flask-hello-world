@@ -86,8 +86,8 @@ def upload():
     redis.set(hash, cdn_url)
     
     if cdn_url:
-        send_text_to_discord(f'https://photo.kei1215.net/{hash}', is_public)
-        if pastebin_url:
+        send_text_to_discord(f'https://soliup.kei1215.net/{hash}', is_public)
+        if cdn_url:
             return f"アップロード成功！画像URL: <a href='https://photo.kei1215.net/{hash}'>https://photo.kei1215.net/{hash}</a>"
         else:
             return "Pastebin への保存に失敗しました"
@@ -100,7 +100,7 @@ def image_view(hash_value):
     response = redis.get(hash_value)
     
     if response.status_code == 200:
-        image_data = requests.get(response.text).content  # URLから画像データを取得
+        image_data = requests.get(response).content  # URLから画像データを取得
         return Response(image_data)
     
     return "画像が見つかりません", 404
