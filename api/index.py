@@ -75,12 +75,12 @@ def allowed_file(filename):
     print(ext)
     return ext in ALLOWED_EXTENSIONS
 
-@app.route("/", methods=["GET"])
+@app.route("/soliup/", methods=["GET"])
 def index():
     """アップロードページを表示"""
     return render_template("upload.html")
 
-@app.route("/upload", methods=["POST"])
+@app.route("/soliup/upload", methods=["POST"])
 def upload():
     """画像をアップロードし、Discord → Pastebin に保存"""
     if "file" not in request.files:
@@ -104,15 +104,15 @@ def upload():
     redis.set(hash, cdn_url)
     
     if cdn_url:
-        send_text_to_discord(f'https://soliup.kei1215.com/{hash}', is_public)
+        send_text_to_discord(f'https://3640.kei1215.com/soliup/{hash}', is_public)
         if cdn_url:
-            return f"アップロード成功！画像URL: <a href='https://soliup.kei1215.com/{hash}'>https://soliup.kei1215.com/{hash}</a>"
+            return f"アップロード成功！画像URL: <a href='https://3640.kei1215.com/soliup/{hash}'>https://3640.kei1215.com/soliup/{hash}</a>"
         else:
             return "Pastebin への保存に失敗しました"
     
     return "アップロードに失敗しました"
 
-@app.route("/<hash_value>", methods=["GET"])
+@app.route("/soliup/<hash_value>", methods=["GET"])
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = redis.get(hash_value)
