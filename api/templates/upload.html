@@ -7,22 +7,44 @@
 </head>
 <body>
     <h2>そりちゃんアップローダー</h2>
-    <form action="/soliup/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <br>
-        <label>
-            <input type="radio" name="visibility" value="public" checked> 公開
-        </label>
-        <label>
-            <input type="radio" name="visibility" value="private"> 限定公開
-        </label>
-        <br>
-        <button type="submit">アップロード</button>
-    </form>
+    <input type="file" id="fileInput" required>
+    <br>
+    <label>
+        <input type="radio" name="visibility" value="public" checked> 公開
+    </label>
+    <label>
+        <input type="radio" name="visibility" value="private"> 限定公開
+    </label>
+    <br>
+    <button onclick="uploadFile()">アップロード</button>
+    
     <h4>以下現在の対応ファイル</h4>
     画像 png/jpg/jpeg/gif/webp/bmp
     <br>動画 mp4/webm
     <br>音声 mp3/wav/ogg
     
+    <script>
+        const CHUNK_SIZE = 1024 * 1024; // 1MB
+        async function uploadFile() {
+            const fileInput = document.getElementById("fileInput");
+            if (!fileInput.files.length) return alert("ファイルを選択してください");
+
+            const file = fileInput.files[0];
+            const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+            const visibility = document.querySelector('input[name="visibility"]:checked').value;
+            
+            for (let i = 0; i < totalChunks; i++) {
+                const chunk = file.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+                let formData = new FormData();
+                formData.append("file", chunk);
+                formData.append("chunk_number", i);
+                formData.append("total_chunks", totalChunks);
+                formData.append("filename", file.name);
+                formData.append("visibility", visibility);
+
+                await fetch("/soliup/upload", { method: "POST", body: formData });
+            }
+        }
+    </script>
 </body>
 </html>
