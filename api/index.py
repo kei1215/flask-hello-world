@@ -4,7 +4,7 @@ import string
 import requests
 import mimetypes
 from upstash_redis import Redis
-from flask import Flask, request, render_template, jsonify, Response
+from flask import Flask, request, render_template, jsonify, Response, redirect
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
@@ -74,6 +74,10 @@ def allowed_file(filename):
     ext = os.path.splitext(filename)[1].lower()
     print(ext)
     return ext in ALLOWED_EXTENSIONS
+
+@app.route('/invite')
+def redirect_func():
+    return redirect('https://discord.gg/7T8rq3ewg8')
 
 @app.route("/soliup/", methods=["GET"])
 def index():
