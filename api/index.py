@@ -10,8 +10,8 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
 
 # 📌 Discord Webhook URLs (公開枠 & 限定公開枠)
-PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930743729422356/nmvuf6bZO5ZpYWBmbo48WNwyc2RQ-quqwQaZ8ixvkATzq7q130qd4WupVg9ZfVVYysCE"
-PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1335930745843089458/AYK-0btOe8vN-LE9ugVV15aDKi_XTNaNYij4iZS021qzzt6RPGt9TkHwQwzjCLP0arOB"
+PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1360812996577984593/cFJE87V0bDmMKqPQL4k3zTAg_abP3unfiWc5Z2WOU7QOkpBIPTU5fdZR_sX-lRmSxBmk"
+PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1360813192259047606/1C9r5fkvREgXSXw8OVXPgYWEc-TwdH6uRD-t9r7lnWDsRxKQoqYdAY4lYuignpXFdx6Q"
 
 redis = Redis(url="https://hopeful-primate-11670.upstash.io", token="AS2WAAIjcDEwMzE0MjVhY2JkNDc0MzFjYTQxZGY4MDFmYzJhNGY2ZXAxMA")
 
