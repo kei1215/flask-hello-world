@@ -53,13 +53,10 @@ def upload_to_discord(message, hash, file_path, is_public):
     
     if response.status_code == 200:
         json_resp = response.json()
-        parts = urlparse(WEBHOOK_URL).path.split("/")
-        webhook_id = parts[-2]
-        webhook_token = parts[-1]
         message_id = json_resp.get("id")
         attachment = json_resp.get("attachments", [{}])[0]
         image_url = attachment.get("url", "")
-        delete_url = f"https://discord.com/api/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}"
+        delete_url = f"{WEBHOOK_URL}/messages/{message_id}"
         return {
             "image_url": image_url,
             "delete_url": delete_url
@@ -134,7 +131,8 @@ def delete(hash_value):
     
     if url:
         # 削除リクエストを送信
-        delete_response = requests.post(url["delete_url"])
+        headers = {'Content-Type': 'application/json'}
+        delete_response = requests.post(url["delete_url"],headers=headers)
         
         # レスポンスの確認（成功の場合はステータスコード200）
         if delete_response.status_code == 200:
