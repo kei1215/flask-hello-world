@@ -132,7 +132,7 @@ def delete_url(hash_value):
     if url:
         # 削除リクエストを送信
         headers = {'Content-Type': 'application/json'}
-        delete_response = requests.post(url["delete_url"],headers=headers)
+        delete_response = requests.delete(url["delete_url"],headers=headers)
         
         # レスポンスの確認（成功の場合はステータスコード200）
         if delete_response.status_code == 200:
