@@ -105,8 +105,7 @@ def upload():
     
     cdn_url = upload_to_discord(message, hash, file_path, is_public)
     os.remove(file_path)  # アップロード後、ローカルから削除
-    redis.set(hash, cdn_url)
-    
+    redis.set(hash, json.dumps(cdn_url))
     if cdn_url:
         return f"アップロード成功！画像URL: <a href='https://3640.kei1215.com/soliup/{hash}'>https://3640.kei1215.com/soliup/{hash}</a>"
     return "アップロードに失敗しました"
