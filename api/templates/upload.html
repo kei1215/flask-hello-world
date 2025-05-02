@@ -5,27 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>そりうp</title>
     <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
     .file-button {
-  border: 2px red dotted;
-  padding: 100px 100px;
-  position: relative;
-width: fit-content;
-}
+      border: 2px dotted #333;
+      background-color: #fff;
+      padding: 80px 100px;
+      position: relative;
+      width: fit-content;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
 
-.file-button::file-selector-button {
-  position: absolute;
-  top: 50%;
-  font-weight: bold;
-  color: white;
-  background: red;
-  font-size: 14px;
-  border: 0;
-  border-radius: 10em;
-  padding: 8px 16px;
-  text-align: center;
-}
+    .file-button:hover {
+      border-color: #000;
+    }
 
-    </style>
+    input[type="file"] {
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background: #000;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    input[type="file"]::file-selector-button {
+      font-weight: bold;
+      color: white;
+      background: #000;
+      font-size: 14px;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    input[type="file"]:hover::file-selector-button {
+      background: #222;
+    }
+
+    .label-text {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
     <h2>そりちゃんアップローダー</h2>
