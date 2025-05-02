@@ -124,7 +124,7 @@ def image_view(hash_value):
     
     return "画像が見つかりません", 404
 @app.route("/del/<hash_value>", methods=["GET"])
-def delete(hash_value):
+def delete_url(hash_value):
     """ハッシュ値に対応する画像を取得し、削除する"""
     url = json.loads(redis.get(hash_value))  # RedisからURLを取得
     print(url)
