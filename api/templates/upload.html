@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>そりうp</title>
+    <style>
+  #drop-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    z-index: 9999;
+    pointer-events: none;
+  }
+</style>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const fileInput = document.querySelector('input[type="file"]');
@@ -47,6 +66,7 @@
     画像 png/jpg/jpeg/gif/webp/bmp
     <br>動画 mp4/webm
     <br>音声 mp3/wav/ogg
-    
+    <div id="drop-overlay">drop here!</div>
+
 </body>
 </html>
