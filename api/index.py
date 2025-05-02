@@ -136,8 +136,8 @@ def delete_url(hash_value):
         redis.delete(hash_value)
         print(delete_response)
         # レスポンスの確認（成功の場合はステータスコード200）
-        if delete_response.status_code == 200:
-            return "画像の削除に成功しました", 200
+        if delete_response.status_code <= 300:
+            return "画像の削除に成功しました"
         else:
             return f"削除に失敗しました: {delete_response.text}", 500
     else:
