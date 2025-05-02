@@ -39,12 +39,12 @@ def generate_hash():
     """8桁の一意なランダムハッシュを生成"""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-def upload_to_discord(text, file_path, is_public):
+def upload_to_discord(message, hash, file_path, is_public):
     """画像をDiscordにアップロードし、CDNのURLを取得"""
     
     WEBHOOK_URL = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
     data = {
-        'content': f"```{text}```"  # 送信したいテキスト
+        'content': f"{text}\n共有URL```https://3640.kei1215.com/soliup/{hash}```削除URL```https://3640.kei1215.com/del/{hash}```"  # 送信したいテキスト
     }
     files = {'file': open(file_path, 'rb')}
     response = requests.post(WEBHOOK_URL, data=data, files=files)
@@ -95,6 +95,7 @@ def upload():
     
     # ✅ 公開設定を取得
     is_public = request.form.get("visibility")
+    message = request.form.get("message")
     if not allowed_file(file.filename):
         return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
     # ✅ ファイルを保存
@@ -102,7 +103,7 @@ def upload():
     file.save(file_path)
     hash = generate_hash()
     
-    cdn_url = upload_to_discord(f'https://3640.kei1215.com/soliup/{hash}', file_path, is_public)
+    cdn_url = upload_to_discord(message, hash, file_path, is_public)
     os.remove(file_path)  # アップロード後、ローカルから削除
     redis.set(hash, cdn_url)
     
