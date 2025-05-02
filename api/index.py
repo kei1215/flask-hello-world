@@ -112,7 +112,7 @@ def upload():
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = json.loads(redis.get(hash_value))
-    print(url)
+    print(url["image_url"])
     if url:
         image_data = requests.get(url["image_url"]).content  # URLから画像データを取得
         
@@ -127,7 +127,7 @@ def image_view(hash_value):
 def delete_url(hash_value):
     """ハッシュ値に対応する画像を取得し、削除する"""
     url = json.loads(redis.get(hash_value))  # RedisからURLを取得
-    print(url)
+    print(url["delete_url"])
     
     if url:
         # 削除リクエストを送信
@@ -136,6 +136,7 @@ def delete_url(hash_value):
         
         # レスポンスの確認（成功の場合はステータスコード200）
         if delete_response.status_code == 200:
+            redis.delete(hash_value)
             return "画像の削除に成功しました", 200
         else:
             return f"削除に失敗しました: {delete_response.text}", 500
