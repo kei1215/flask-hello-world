@@ -12,7 +12,7 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
 # 📌 Discord Webhook URLs (公開枠 & 限定公開枠)
 PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1360812996577984593/cFJE87V0bDmMKqPQL4k3zTAg_abP3unfiWc5Z2WOU7QOkpBIPTU5fdZR_sX-lRmSxBmk"
 PRIVATE_WEBHOOK_URL = "https://discord.com/api/webhooks/1360813192259047606/1C9r5fkvREgXSXw8OVXPgYWEc-TwdH6uRD-t9r7lnWDsRxKQoqYdAY4lYuignpXFdx6Q"
-
+JOINT_WEBHOOOK_URL = "https://discord.com/api/webhooks/1367153610831695934/73cNYAmB9-5j7t-EjgYjBrL3fFu-44FKZO_5ThEpbtG8p6zewq0LPI2we3_EIf8e4J96"
 redis = Redis(url="https://hopeful-primate-11670.upstash.io", token="AS2WAAIjcDEwMzE0MjVhY2JkNDc0MzFjYTQxZGY4MDFmYzJhNGY2ZXAxMA")
 
 EXTENSION_TO_MIMETYPE = {
@@ -41,7 +41,8 @@ def generate_hash():
 
 def upload_to_discord(file_path, is_public):
     """画像をDiscordにアップロードし、CDNのURLを取得"""
-    webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
+    
+    webhook_url = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
     files = {'file': open(file_path, 'rb')}
     response = requests.post(webhook_url, files=files)
     files['file'].close()
@@ -55,7 +56,7 @@ import requests
 
 def send_text_to_discord(text, is_public):
     """Discordに文字だけを送信"""
-    webhook_url = PUBLIC_WEBHOOK_URL if is_public else PRIVATE_WEBHOOK_URL
+    webhook_url = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
     
     data = {
         'content': f"```{text}```"  # 送信したいテキスト
@@ -95,7 +96,7 @@ def upload():
         return "ファイルがありません"
     
     # ✅ 公開設定を取得
-    is_public = request.form.get("visibility") == "public"
+    is_public = request.form.get("visibility")
     if not allowed_file(file.filename):
         return jsonify({'error': 'Invalid file type. Only images are allowed.'}), 400
     # ✅ ファイルを保存
