@@ -47,7 +47,7 @@ def upload_to_discord(text, file_path, is_public):
         'content': f"```{text}```"  # 送信したいテキスト
     }
     files = {'file': open(file_path, 'rb')}
-    response = requests.post(WEBHOOK_URL, json=data, files=files)
+    response = requests.post(WEBHOOK_URL, data=data, files=files)
     files['file'].close()
     
     if response.status_code == 200:
