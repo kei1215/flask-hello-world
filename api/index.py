@@ -44,7 +44,7 @@ def upload_to_discord(message, hash, file_path, is_public):
     
     WEBHOOK_URL = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
     data = {
-        'content': f"{text}\n共有URL```https://3640.kei1215.com/soliup/{hash}```削除URL```https://3640.kei1215.com/del/{hash}```"  # 送信したいテキスト
+        'content': f"{message}\n共有URL```https://3640.kei1215.com/soliup/{hash}```削除URL```https://3640.kei1215.com/del/{hash}```"  # 送信したいテキスト
     }
     files = {'file': open(file_path, 'rb')}
     response = requests.post(WEBHOOK_URL, data=data, files=files)
@@ -52,7 +52,7 @@ def upload_to_discord(message, hash, file_path, is_public):
     
     if response.status_code == 200:
         json_resp = response.json()
-        parts = urlparse(webhook_url).path.split("/")
+        parts = urlparse(WEBHOOK_URL).path.split("/")
         webhook_id = parts[-2]
         webhook_token = parts[-1]
         message_id = json_resp.get("id")
@@ -60,18 +60,18 @@ def upload_to_discord(message, hash, file_path, is_public):
         image_url = attachment.get("url", "")
         delete_url = f"https://discord.com/api/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}"
         return {
-        "image_url": image_url,
-        "delete_url": delete_url
-    }
+            "image_url": image_url,
+            "delete_url": delete_url
+        }
     return None
 
 import requests
+from urllib.parse import urlparse
 
 def allowed_file(filename):
     # 拡張子を小文字にして取得
     ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.mp4', '.mov', '.avi', '.mkv', '.mp3', '.wav', '.flac'}
     ext = os.path.splitext(filename)[1].lower()
-    print(ext)
     return ext in ALLOWED_EXTENSIONS
 
 @app.route('/invite')
@@ -108,14 +108,10 @@ def upload():
     redis.set(hash, cdn_url)
     
     if cdn_url:
-        if cdn_url:
-            return f"アップロード成功！画像URL: <a href='https://3640.kei1215.com/soliup/{hash}'>https://3640.kei1215.com/soliup/{hash}</a>"
-        else:
-            return "Pastebin への保存に失敗しました"
-    
+        return f"アップロード成功！画像URL: <a href='https://3640.kei1215.com/soliup/{hash}'>https://3640.kei1215.com/soliup/{hash}</a>"
     return "アップロードに失敗しました"
 
-    @app.route("/soliup/<hash_value>", methods=["GET"])
+@app.route("/soliup/<hash_value>", methods=["GET"])
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = redis.get(hash_value)
@@ -125,7 +121,6 @@ def image_view(hash_value):
         
         # ファイルの拡張子からMIMEタイプを取得
         mime_type = EXTENSION_TO_MIMETYPE.get(url.split('?')[0].split('.')[-1].lower(), "application/octet-stream")
-        print(f"Detected MIME Type: {mime_type}")
         if not mime_type:
             mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
             
