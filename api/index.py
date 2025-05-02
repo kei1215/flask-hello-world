@@ -114,7 +114,7 @@ def upload():
 @app.route("/soliup/<hash_value>", methods=["GET"])
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
-    url = redis.get(hash_value)
+    url = json.loads(redis.get(hash_value))
     print(url)
     if url:
         image_data = requests.get(url['image_url']).content  # URLから画像データを取得
