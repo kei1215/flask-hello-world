@@ -39,17 +39,20 @@ def generate_hash():
     """8桁の一意なランダムハッシュを生成"""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
-def upload_to_discord(file_path, is_public):
+def upload_to_discord(text, file_path, is_public):
     """画像をDiscordにアップロードし、CDNのURLを取得"""
     
     webhook_url = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
+    data = {
+        'content': f"```{text}```"  # 送信したいテキスト
+    }
     files = {'file': open(file_path, 'rb')}
-    response = requests.post(webhook_url, files=files)
+    response = requests.post(WEBHOOK_URL, json=data, files=files)
     files['file'].close()
     
     if response.status_code == 200:
         json_resp = response.json()
-        return json_resp['attachments'][0]['url']
+        return json_resp
     return None
 
 import requests
@@ -104,12 +107,11 @@ def upload():
     file.save(file_path)
     hash = generate_hash()
     
-    cdn_url = upload_to_discord(file_path, is_public)
+    cdn_url = upload_to_discord(f'https://3640.kei1215.com/soliup/{hash}', file_path, is_public)
     os.remove(file_path)  # アップロード後、ローカルから削除
     redis.set(hash, cdn_url)
     
     if cdn_url:
-        send_text_to_discord(f'https://3640.kei1215.com/soliup/{hash}', is_public)
         if cdn_url:
             return f"アップロード成功！画像URL: <a href='https://3640.kei1215.com/soliup/{hash}'>https://3640.kei1215.com/soliup/{hash}</a>"
         else:
@@ -123,7 +125,7 @@ def image_view(hash_value):
     url = redis.get(hash_value)
     
     if url:
-        image_data = requests.get(url).content  # URLから画像データを取得
+        image_data = requests.get(url['attachments'][0]['url']).content  # URLから画像データを取得
         
         # ファイルの拡張子からMIMEタイプを取得
         mime_type = EXTENSION_TO_MIMETYPE.get(url.split('?')[0].split('.')[-1].lower(), "application/octet-stream")
