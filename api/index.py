@@ -117,7 +117,7 @@ def image_view(hash_value):
     url = redis.get(hash_value)
     
     if url:
-        image_data = requests.get(url['attachments'][0]['url']).content  # URLから画像データを取得
+        image_data = requests.get(url['image_url']).content  # URLから画像データを取得
         
         # ファイルの拡張子からMIMEタイプを取得
         mime_type = EXTENSION_TO_MIMETYPE.get(url.split('?')[0].split('.')[-1].lower(), "application/octet-stream")
