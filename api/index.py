@@ -52,26 +52,14 @@ def upload_to_discord(text, file_path, is_public):
     
     if response.status_code == 200:
         json_resp = response.json()
+        parts = urlparse(webhook_url).path.split("/")
+        webhook_id = parts[-2]
+        webhook_token = parts[-1]
         return json_resp
     return None
 
 import requests
 
-def send_text_to_discord(text, is_public):
-    """Discordに文字だけを送信"""
-    webhook_url = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
-    
-    data = {
-        'content': f"```{text}```"  # 送信したいテキスト
-    }
-    
-    response = requests.post(webhook_url, json=data)
-    
-    if response.status_code == 200:
-        return "メッセージ送信成功"
-    else:
-        return "メッセージ送信に失敗しました"
-        
 def allowed_file(filename):
     # 拡張子を小文字にして取得
     ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.mp4', '.mov', '.avi', '.mkv', '.mp3', '.wav', '.flac'}
@@ -119,7 +107,7 @@ def upload():
     
     return "アップロードに失敗しました"
 
-@app.route("/soliup/<hash_value>", methods=["GET"])
+    @app.route("/soliup/<hash_value>", methods=["GET"])
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = redis.get(hash_value)
