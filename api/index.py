@@ -55,7 +55,14 @@ def upload_to_discord(text, file_path, is_public):
         parts = urlparse(webhook_url).path.split("/")
         webhook_id = parts[-2]
         webhook_token = parts[-1]
-        return json_resp
+        message_id = json_resp.get("id")
+        attachment = json_resp.get("attachments", [{}])[0]
+        image_url = attachment.get("url", "")
+        delete_url = f"https://discord.com/api/webhooks/{webhook_id}/{webhook_token}/messages/{message_id}"
+        return {
+        "image_url": image_url,
+        "delete_url": delete_url
+    }
     return None
 
 import requests
