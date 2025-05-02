@@ -42,7 +42,7 @@ def generate_hash():
 def upload_to_discord(text, file_path, is_public):
     """画像をDiscordにアップロードし、CDNのURLを取得"""
     
-    webhook_url = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
+    WEBHOOK_URL = PUBLIC_WEBHOOK_URL if is_public == "1" else PRIVATE_WEBHOOK_URL if is_public == "2" else JOINT_WEBHOOOK_URL
     data = {
         'content': f"```{text}```"  # 送信したいテキスト
     }
