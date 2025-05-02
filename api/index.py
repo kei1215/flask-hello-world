@@ -126,10 +126,6 @@ def image_view(hash_value):
         return Response(image_data, mimetype=mime_type)
     
     return "画像が見つかりません", 404
-
-if __name__ == "__main__":
-    app.run(debug=True)
-    
 @app.route("/del/<hash_value>", methods=["GET"])
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し、削除する"""
@@ -147,3 +143,6 @@ def image_view(hash_value):
             return f"削除に失敗しました: {delete_response.text}", 500
     else:
         return "URLが見つかりませんでした", 404
+        
+if __name__ == "__main__":
+    app.run(debug=True)
