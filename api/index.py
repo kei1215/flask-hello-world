@@ -129,3 +129,21 @@ def image_view(hash_value):
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
+@app.route("/del/<hash_value>", methods=["GET"])
+def image_view(hash_value):
+    """ハッシュ値に対応する画像を取得し、削除する"""
+    url = json.loads(redis.get(hash_value))  # RedisからURLを取得
+    print(url)
+    
+    if url:
+        # 削除リクエストを送信
+        delete_response = requests.post(url["delete_url"])
+        
+        # レスポンスの確認（成功の場合はステータスコード200）
+        if delete_response.status_code == 200:
+            return "画像の削除に成功しました", 200
+        else:
+            return f"削除に失敗しました: {delete_response.text}", 500
+    else:
+        return "URLが見つかりませんでした", 404
