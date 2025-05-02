@@ -133,10 +133,10 @@ def delete_url(hash_value):
         # 削除リクエストを送信
         headers = {'Content-Type': 'application/json'}
         delete_response = requests.delete(url["delete_url"],headers=headers)
+        redis.delete(hash_value)
         
         # レスポンスの確認（成功の場合はステータスコード200）
         if delete_response.status_code == 200:
-            redis.delete(hash_value)
             return "画像の削除に成功しました", 200
         else:
             return f"削除に失敗しました: {delete_response.text}", 500
