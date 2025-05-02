@@ -1,71 +1,90 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>そりうp</title>
-<style>
-.drop-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
-  font-size: 48px;
-  font-weight: bold;
-  z-index: 9999;
-  pointer-events: none; /* 背後のボタンやフォームを触れるようにする */
-}
-</style>
-    <script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>そりうp</title>
+  <style>
+    .drop-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: black;
+      font-size: 48px;
+      font-weight: bold;
+      z-index: 9999;
+      pointer-events: none;
+    }
+  </style>
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const fileInput = document.querySelector('input[type="file"]');
+      const fileInput = document.querySelector('input[type="file"]');
+      const maxSizeMB = 4;
 
-        // ページ全体に対して drag over 対応
-        window.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "copy";
-        });
+      // ファイルサイズチェック関数
+      function isFileTooLarge(file) {
+        return file.size > maxSizeMB * 1024 * 1024;
+      }
 
-        // ドロップ時にファイルを input にセット
-        window.addEventListener("drop", (e) => {
-            e.preventDefault();
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
-            }
-        });
+      // inputから選択されたときのサイズチェック
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (file && isFileTooLarge(file)) {
+          alert("アップロード不可です（4MB以下のファイルのみ対応）");
+          fileInput.value = ""; // 選択をクリア
+        }
+      });
+
+      // ページ全体への drag & drop 対応
+      window.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+      });
+
+      window.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          if (isFileTooLarge(file)) {
+            alert("アップロード不可です（4MB以下のファイルのみ対応）");
+          } else {
+            fileInput.files = files;
+          }
+        }
+      });
     });
-    </script>
-
+  </script>
 </head>
 <body>
-    <h2>そりちゃんアップローダー</h2>
-    <form action="./upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" class="file-button" required>
-        <br>
-        <label>
-            <input type="radio" name="visibility" value="1" checked> 公開
-        </label>
-        <label>
-            <input type="radio" name="visibility" value="2"> 限定公開
-        </label>
-        <label>
-            <input type="radio" name="visibility" value="3"> 悠久合同公開
-        </label>
-        <br>
-        <button type="submit">アップロード</button>
-    </form>
-    <div class="drop-overlay">Drop here!</div>
-    <h4>以下現在の対応ファイル</h4>
-    画像 png/jpg/jpeg/gif/webp/bmp
-    <br>動画 mp4/webm
-    <br>音声 mp3/wav/ogg
-    
+  <h2>そりちゃんアップローダー</h2>
+  <form action="./upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" class="file-button" required>
+    <br>
+    <label>
+      <input type="radio" name="visibility" value="1" checked> 公開
+    </label>
+    <label>
+      <input type="radio" name="visibility" value="2"> 限定公開
+    </label>
+    <label>
+      <input type="radio" name="visibility" value="3"> 悠久合同公開
+    </label>
+    <br>
+    <button type="submit">アップロード</button>
+  </form>
 
+  <div class="drop-overlay">Drop here!</div>
+
+  <h4>以下現在の対応ファイル</h4>
+  画像 png/jpg/jpeg/gif/webp/bmp
+  <br>動画 mp4/webm
+  <br>音声 mp3/wav/ogg
+  <br>4MB以上不可
 </body>
 </html>
