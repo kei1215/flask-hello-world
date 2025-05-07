@@ -52,11 +52,8 @@ def upload_to_discord(message, hash, file_path, is_public):
     files['file'].close()
     
     if response.status_code == 200:
-        json_resp = response.json()
         message_id = json_resp.get("id")
-        attachment = json_resp.get("attachments", [{}])[0]
-        image_url = attachment.get("url", "")
-        delete_url = f"{WEBHOOK_URL}/messages/{message_id}"
+        url = f"{WEBHOOK_URL}/messages/{message_id}"
         return url
     return None
 
