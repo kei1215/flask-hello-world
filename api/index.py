@@ -112,15 +112,14 @@ def upload():
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = json.loads(redis.get(hash_value))
-    print(url["image_url"])
-    if url:
-        image_data = requests.get(url["image_url"]).content  # URLから画像データを取得
-        
-        mime_type = EXTENSION_TO_MIMETYPE.get(url["image_url"].split('?')[0].split('.')[-1].lower(), "application/octet-stream")
-        if not mime_type:
-            mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
-            
-        return Response(image_data, mimetype=mime_type)
+    response = requests.get(delete_url)
+    if response.ok:
+        data = response.json()
+        attachments = data.get("attachments", [])
+        for i, attachment in enumerate(attachments):
+            print(f"Attachment {i}: {attachment['url']}")
+    else:
+        print("Error:", response.status_code, response.text)
     
     return "画像が見つかりません", 404
 @app.route("/del/<hash_value>", methods=["GET"])
