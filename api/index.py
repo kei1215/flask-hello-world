@@ -122,7 +122,7 @@ def image_view(hash_value):
             mime_type = EXTENSION_TO_MIMETYPE.get(attachment['url'].split('?')[0].split('.')[-1].lower(), "application/octet-stream")
             if not mime_type:
                 mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
-            Response(image_data, mimetype=mime_type)
+            return Response(image_data, mimetype=mime_type)
     else:
         print("Error:", response.status_code, response.text)
     
