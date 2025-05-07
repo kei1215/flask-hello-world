@@ -113,9 +113,9 @@ def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = json.loads(redis.get(hash_value))
     response = requests.get(url["delete_url"])
-    print(response)
     if response.ok:
         data = response.json()
+        print(data)
         attachments = data.get("attachments", [])
         for i, attachment in enumerate(attachments):
             image_data = requests.get(attachment['url']).content  # URLから画像データを取得
