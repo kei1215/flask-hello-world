@@ -57,10 +57,7 @@ def upload_to_discord(message, hash, file_path, is_public):
         attachment = json_resp.get("attachments", [{}])[0]
         image_url = attachment.get("url", "")
         delete_url = f"{WEBHOOK_URL}/messages/{message_id}"
-        return {
-            "image_url": image_url,
-            "delete_url": delete_url
-        }
+        return url
     return None
 
 import requests
@@ -112,7 +109,7 @@ def upload():
 def image_view(hash_value):
     """ハッシュ値に対応する画像を取得し表示"""
     url = json.loads(redis.get(hash_value))
-    response = requests.get(url["delete_url"])
+    response = requests.get(url)
     if response.ok:
         data = response.json()
         print(data)
