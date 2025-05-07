@@ -118,6 +118,7 @@ def image_view(hash_value):
         data = response.json()
         attachments = data.get("attachments", [])
         for i, attachment in enumerate(attachments):
+            image_data = requests.get(attachment['url']).content  # URLから画像データを取得
             mime_type = EXTENSION_TO_MIMETYPE.get(attachment['url'].split('?')[0].split('.')[-1].lower(), "application/octet-stream")
             if not mime_type:
                 mime_type = "application/octet-stream"  # 不明な場合は汎用バイナリデータ
