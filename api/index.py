@@ -130,7 +130,7 @@ def delete_url(hash_value):
         # 削除リクエストを送信
         url = json.loads(redis.get(hash_value))
         headers = {'Content-Type': 'application/json'}
-        delete_response = requests.delete(url["delete_url"],headers=headers)
+        delete_response = requests.delete(url,headers=headers)
         redis.delete(hash_value)
         print(delete_response)
         # レスポンスの確認（成功の場合はステータスコード200）
